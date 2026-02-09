@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字と式：記号の言語と抽象化 - 究極のアーカイブ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media', // デバイスのテーマ設定に自動追従
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans JP"', 'sans-serif'],
+                        serif: ['"Noto Serif JP"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            scroll-behavior: smooth;
+            line-height: 2.4; /* 行間を広げて読みやすく */
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .serif-text {
+            font-family: 'Noto Serif JP', serif;
+        }
+
+        /* Slide-out Panel Styles */
+        .quiz-panel {
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateX(100%);
+            box-shadow: -10px 0 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-panel.active {
+            transform: translateX(0);
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .glass-morphism {
+                background: rgba(15, 23, 42, 0.85);
+                border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+            }
+        }
+
+        .content-card {
+            border-radius: 1.5rem;
+            padding: 4rem;
+            margin-bottom: 5rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+        }
+
+        .equation-box {
+            border-left: 6px solid #4f46e5;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, transparent 100%);
+            padding: 3rem;
+            margin: 4rem 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            border-radius: 0 1rem 1rem 0;
+            font-family: 'Noto Serif JP', serif;
+            letter-spacing: 0.05em;
+        }
+
+        .chapter-title {
+            position: relative;
+            padding-bottom: 1.5rem;
+            margin-bottom: 3.5rem;
+            font-size: 2.25rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .chapter-title {
+                border-bottom: 1px solid #334155;
+            }
+        }
+
+        .chapter-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 80px;
+            height: 4px;
+            background: #4f46e5;
+            border-radius: 2px;
+        }
+
+        .sub-section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 4.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            color: #312e81;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .sub-section-title {
+                color: #e0e7ff;
+            }
+        }
+
+        .sub-section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 28px;
+            background: #6366f1;
+            margin-right: 16px;
+            border-radius: 99px;
+        }
+
+        p { margin-bottom: 2.5rem; font-size: 1.125rem; text-align: justify; letter-spacing: 0.04em; color: #334155; }
+        
+        @media (prefers-color-scheme: dark) {
+            p { color: #94a3b8; }
+        }
+
+        .diagram-box {
+            border-radius: 2rem;
+            padding: 4rem;
+            margin: 5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .diagram-box {
+                background-color: #0f172a;
+                border: 1px solid #1e293b;
+            }
+        }
+
+        .highlight-text {
+            background: linear-gradient(180deg, transparent 65%, #c7d2fe 65%);
+            font-weight: 700;
+            padding: 0 4px;
+            color: #1e1b4b;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .highlight-text {
+                background: linear-gradient(180deg, transparent 65%, #312e81 65%);
+                color: #e0e7ff;
+            }
+        }
+
+        /* Trivia Box Styling */
+        .trivia-box {
+            border-radius: 1.25rem;
+            padding: 2.5rem 3rem;
+            margin: 4rem 0;
+            position: relative;
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .trivia-box {
+                background-color: rgba(120, 53, 15, 0.1);
+                border: 1px solid rgba(180, 83, 9, 0.4);
+            }
+        }
+
+        .trivia-badge {
+            position: absolute;
+            top: -16px;
+            left: 32px;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 9999px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Quiz UI */
+        .quiz-input {
+            transition: all 0.2s ease;
+        }
+        .quiz-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+        .correct-answer {
+            background-color: #f0fdf4 !important;
+            border-color: #22c55e !important;
+            color: #15803d !important;
+            box-shadow: 0 0 0 1px #22c55e;
+        }
+        .incorrect-answer {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+            box-shadow: 0 0 0 1px #ef4444;
+        }
+        
+        .feedback-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-size: 1rem;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* KaTeX SVG fix */
+        foreignObject { overflow: visible; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Math formula specific styling */
+        .math-block {
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-200 dark:selection:bg-indigo-900">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-40 glass-morphism">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Algebra Variable Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24">
+                     <path d="M18 6L6 18" />
+                     <path d="M6 6l12 12" />
+                </svg>
+                <span class="font-bold text-lg tracking-tight hidden sm:block">Archive: Algebra</span>
+            </div>
+            <button id="quizTrigger" class="group bg-slate-900 text-white dark:bg-indigo-600 dark:text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-3 text-sm md:text-base border border-transparent hover:border-indigo-400">
+                <!-- Bootstrap Icon: pencil-square -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="transition-transform group-hover:rotate-12" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+                <span>無限演習ジェネレーター</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-24">
+        
+        <!-- Hero Section -->
+        <header class="text-center mb-32">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6">
+                The Language of Universality
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-10 tracking-tight leading-tight">
+                <span class="hero-gradient">文字と式</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-600 dark:text-slate-400 serif-text max-w-3xl mx-auto leading-loose">
+                特定の数から脱却し、普遍的な法則を記述するためのツール。<br>
+                「箱」としての変数、$x$や$y$が織りなす抽象的な世界。<br>
+                数学を「計算」から「論理」へと昇華させる代数学の扉を徹底的に紐解く。
+            </p>
+        </header>
+
+        <!-- Chapter 1: Essence -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第1章：未知数という名の「箱」</h2>
+            <div class="serif-text">
+                <p>
+                    <strong>文字式（Algebraic Expression）</strong>とは、具体的な数の代わりに、$x$ や $a$ といった記号を用いて数量関係を表したものである。算数が「目に見える数」の計算だったとすれば、数学の「文字と式」は「まだ見ぬ数」を取り扱うための革命的なシフトである。
+                </p>
+
+                <p>
+                    なぜわざわざ文字を使うのか？ それは、文字が「中身を入れ替え可能な箱（プレースホルダー）」だからだ。$3+5=8$ はその一回きりの事実に過ぎないが、$a+b=c$ は無限の組み合わせを内包している。文字式の導入により、我々は個別の事象ではなく<span class="highlight-text">「構造そのもの」を語ることができる</span>ようになる。
+                </p>
+
+                <div class="diagram-box">
+                    <h4 class="text-lg font-bold mb-12 text-slate-700 dark:text-slate-300 tracking-wider">変数の概念モデル</h4>
+                    
+                    <!-- HTML/CSS based diagram for Algebra visualization -->
+                    <div class="relative flex flex-col items-center justify-center p-8">
+                        
+                        <!-- Box Diagram Structure -->
+                        <div class="flex items-center gap-12 flex-wrap justify-center">
+                            
+                            <!-- Variable Box X -->
+                            <div class="flex flex-col items-center group">
+                                <div class="w-32 h-32 bg-white dark:bg-slate-800 border-4 border-indigo-500 dark:border-indigo-400 rounded-xl flex items-center justify-center shadow-lg relative z-10 transition-transform group-hover:-translate-y-2">
+                                    <div class="absolute -top-4 -left-4 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">x</div>
+                                    <div class="text-4xl text-slate-400 dark:text-slate-500 font-bold group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
+                                        ?
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center text-sm text-slate-500">任意の数が入る箱</div>
+                            </div>
+
+                            <div class="text-4xl font-bold text-slate-300">×</div>
+
+                            <!-- Multiplier -->
+                            <div class="w-24 h-24 bg-transparent border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-full flex items-center justify-center">
+                                <div class="text-4xl font-bold text-slate-700 dark:text-slate-300">3</div>
+                            </div>
+
+                            <div class="text-4xl font-bold text-slate-300">=</div>
+
+                            <!-- Result Expression -->
+                            <div class="w-40 h-32 bg-indigo-50 dark:bg-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-xl flex items-center justify-center shadow-sm">
+                                <div class="text-5xl font-bold text-indigo-900 dark:text-indigo-100">
+                                    $$ 3x $$
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-12 italic text-center max-w-lg">
+                        $x$ という「箱」に何が入っても、結果は常にその3倍になる。<br>この関係性（関数的思考）こそが文字式の本質である。
+                    </p>
+                </div>
+
+                <div class="equation-box text-slate-900 dark:text-slate-100 shadow-sm">
+                    $$ y = ax + b $$
+                </div>
+
+                <h3 class="sub-section-title">物理的な解釈：パターンの保存</h3>
+                <p>
+                    文字式は「手順の保存」でもある。例えば「ある数を2倍して5を足す」という操作を言葉で説明するのは冗長だが、$2x+5$ と書けば一瞬で伝わる。
+                    さらに、式変形を行うことで、計算する前に「簡略化」ができる。$3x + 2x$ を $5x$ とまとめる行為は、複雑な現象をシンプルな原理に還元する科学的思考の第一歩である。
+                </p>
+                <p>
+                    また、等式（方程式）における文字は「探すべき未知の数」としての役割も持つ。$x + 3 = 7$ における $x$ は、単なる箱ではなく、「4である」という運命づけられた値となる。このように、文字は文脈によって「変数（Variable）」にも「未知数（Unknown）」にも変化する柔軟性を持つ。
+                </p>
+
+                <!-- Trivia 1 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：なぜ「$x$」なのか？
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        未知数に $x$ が使われる理由は諸説あるが、デカルトが著書『幾何学』で、既知数にアルファベットの最初の方（$a, b, c$）、未知数に最後の方（$x, y, z$）を割り当てたのが定着したとされる。印刷所で $x$ の活字が余っていたから、という俗説もあるが、アラビア語の「未知のもの（shay）」の音訳がスペイン語で $x$ と表記されたという説も有力である。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 1.5: Calculation (Expanded) -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">実践：文字式のルールと解き方</h2>
+            <div class="serif-text">
+                <p>
+                    文字式を扱うには、数学の世界共通言語である「記述のルール」をマスターする必要がある。まずはこの文法を理解し、その上で実際に値を代入して解く手順を身につけよう。
+                </p>
+
+                <h3 class="sub-section-title">記述のルール：4つの鉄則</h3>
+                <p>
+                    数学的な記述には厳密な作法がある。これらを無視すると「文法エラー」と見なされるため、以下の4つのルールを徹底する。
+                </p>
+
+                <!-- Rule 1 -->
+                <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800 mb-10">
+                    <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                        ルール1：乗法（$\times$）の省略
+                    </p>
+                    <div class="pl-4 border-l-2 border-indigo-200 dark:border-indigo-700">
+                        <p class="mb-2 text-sm text-slate-600 dark:text-slate-400">
+                            記号 $\times$ は書かない。数は文字の前に、文字はアルファベット順に並べるのが基本である。
+                        </p>
+                        <div class="font-mono text-xl font-bold text-indigo-700 dark:text-indigo-300 py-2">
+                            $$ a \times 3 \times b \rightarrow 3ab $$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rule 2 -->
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 p-8 rounded-2xl border border-emerald-100 dark:border-emerald-800 mb-10">
+                    <p class="font-bold text-emerald-900 dark:text-emerald-200 mb-4 flex items-center gap-2">
+                        <span class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                        ルール2：$1$ の省略
+                    </p>
+                    <div class="pl-4 border-l-2 border-emerald-200 dark:border-emerald-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            係数が $1$ または $-1$ の場合、$1$ は書かない（ただし、$0.1$ などの小数は例外）。
+                        </p>
+                        <div class="font-mono text-xl font-bold text-emerald-800 dark:text-emerald-300 py-2">
+                            $$ 1 \times a \rightarrow a, \quad -1 \times x \rightarrow -x $$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rule 3 -->
+                <div class="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-2xl border border-amber-100 dark:border-amber-800 mb-10">
+                    <p class="font-bold text-amber-900 dark:text-amber-200 mb-4 flex items-center gap-2">
+                        <span class="bg-amber-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
+                        ルール3：同じ文字の積は指数
+                    </p>
+                    <div class="pl-4 border-l-2 border-amber-200 dark:border-amber-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            同じ文字を複数回掛ける場合は、右上に小さく個数を書き「累乗」の形で表す。
+                        </p>
+                        <div class="font-mono text-xl font-bold text-amber-800 dark:text-amber-300 py-2">
+                            $$ x \times x \times x \rightarrow x^3 $$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rule 4 -->
+                <div class="bg-purple-50 dark:bg-purple-900/20 p-8 rounded-2xl border border-purple-100 dark:border-purple-800 mb-10">
+                    <p class="font-bold text-purple-900 dark:text-purple-200 mb-4 flex items-center gap-2">
+                        <span class="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">4</span>
+                        ルール4：除法（$\div$）は分数
+                    </p>
+                    <div class="pl-4 border-l-2 border-purple-200 dark:border-purple-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            記号 $\div$ は使わず、分数の形で表す。割る数（後ろの数）が分母に来る。
+                        </p>
+                        <div class="font-mono text-xl font-bold text-purple-800 dark:text-purple-300 py-2">
+                            $$ a \div 5 \rightarrow \frac{a}{5} $$
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="sub-section-title">計算の実践：代入のテクニック</h3>
+                <p>
+                    ルールを覚えたら、実際に「箱（文字）」に数を入れて計算してみよう。ここで最も重要なのは<strong>「代入するときは、元の式の形を変えない」</strong>ことだ。
+                </p>
+
+                <!-- Pattern A: Basic -->
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-8 rounded-2xl border border-blue-100 dark:border-blue-800 mb-10">
+                    <p class="font-bold text-blue-900 dark:text-blue-200 mb-4 flex items-center gap-2">
+                        <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">A</span>
+                        基本パターン：正の数の代入
+                    </p>
+                    <div class="pl-4 border-l-2 border-blue-200 dark:border-blue-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            例：$x = 4$ のとき、$3x + 5$ の値を求める
+                        </p>
+                        <div class="math-block">
+                            $$ \begin{aligned}
+                            3x + 5 &= 3 \times 4 + 5 \\
+                                   &= 12 + 5 \\
+                                   &= 17
+                            \end{aligned} $$
+                        </div>
+                        <p class="font-bold text-sm text-blue-800 dark:text-blue-300 mt-2">Point: 省略された $\times$ を復活させてから計算する。</p>
+                    </div>
+                </div>
+
+                <!-- Pattern B: Negative -->
+                <div class="bg-rose-50 dark:bg-rose-900/20 p-8 rounded-2xl border border-rose-100 dark:border-rose-800 mb-10">
+                    <p class="font-bold text-rose-900 dark:text-rose-200 mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">B</span>
+                        注意パターン：負の数の代入
+                    </p>
+                    <div class="pl-4 border-l-2 border-rose-200 dark:border-rose-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            例：$a = -3$ のとき、$5 - 2a$ の値を求める
+                        </p>
+                        <div class="math-block">
+                            $$ \begin{aligned}
+                            5 - 2a &= 5 - 2 \times (-3) \\
+                                   &= 5 - (-6) \\
+                                   &= 5 + 6 \\
+                                   &= 11
+                            \end{aligned} $$
+                        </div>
+                        <p class="font-bold text-sm text-rose-800 dark:text-rose-300 mt-2">重要：負の数を代入するときは必ずカッコ ( ) をつける！</p>
+                    </div>
+                </div>
+
+                <!-- Pattern C: Exponents -->
+                <div class="bg-teal-50 dark:bg-teal-900/10 p-8 rounded-2xl border border-teal-100 dark:border-teal-800 mb-8">
+                    <p class="font-bold text-teal-900 dark:text-teal-200 mb-4 flex items-center gap-2">
+                        <span class="bg-teal-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">C</span>
+                        応用パターン：累乗の計算
+                    </p>
+                    <div class="pl-4 border-l-2 border-teal-200 dark:border-teal-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            例：$x = -2$ のとき、$x^2$ と $-x^2$ の違い
+                        </p>
+                        <div class="math-block">
+                            $$ \begin{aligned}
+                            x^2 &= (-2) \times (-2) = 4 \\
+                            -x^2 &= - (2 \times 2) = -4
+                            \end{aligned} $$
+                        </div>
+                        <p class="font-bold text-sm text-teal-800 dark:text-teal-300 mt-2">カッコの位置で符号が逆転するので要注意。</p>
+                    </div>
+                </div>
+
+                <!-- Trivia 2 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：代入は「Substitution」
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        文字に具体的な数を当てはめることを「代入」と呼ぶ。英語では「Substitution（スポーツの選手交代と同じ単語）」を使う。
+                        $x = 3$ のとき、$2x + 1$ の値を求めることは、フィールド上の $x$ 選手をベンチに下げ、代わりに背番号3の選手を送り出すイメージである。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 2: History -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第2章：代数学の父と記号の進化</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    人類が現在の洗練された記号法を手に入れるまでには、長い歴史が必要だった。古代の人々は方程式をすべて「言葉（文章）」で記述していたのである。
+                </p>
+                
+                <h3 class="sub-section-title">アル＝フワーリズミーの『Al-Jabr』</h3>
+                <p>
+                    9世紀、バグダッドの数学者アル＝フワーリズミーは、著書『ヒサーブ・アル＝ジャブル・ワル＝ムカーバラ』の中で、移項や消去といった方程式の解法を体系化した。
+                    この書名にある「アル＝ジャブル（Al-Jabr：バラバラのものを復元する）」が、西洋に伝わり「アルジェブラ（Algebra：代数学）」の語源となった。
+                    彼はまだ $x$ などの記号は使わず、「根」「平方」といった言葉で表現していたが、その論理構造は現代の代数学そのものである。
+                </p>
+
+                <h3 class="sub-section-title">ヴィエトによる記号化の革命</h3>
+                <p>
+                    16世紀フランスの数学者フランソワ・ヴィエトは、「既知の数にも文字を使う」という画期的なアイデアを導入した。
+                    それまでは未知数だけが特別扱いされていたが、彼は $ax^2 + bx + c = 0$ のように、定数係数さえも文字で表すことで、個々の方程式ではなく「方程式の種族全体」を扱う一般理論への道を切り開いた。これにより数学は具体的な数値計算から、記号操作による論理的推論へと飛躍した。
+                </p>
+
+                <!-- Trivia 3 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：等号「=」の発明
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        現在当たり前に使われている等号（イコール）は、1557年にイギリスのロバート・レコードが発明した。
+                        彼は「平行な2本の線ほど等しいものは存在しない」という理由で、2本の横棒を等号として採用した。
+                        それまでは "aequalis"（等しい）という単語を書いたり、長い文章で説明したりしていた。記号化は思考のスピードを加速させたのである。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Proofs -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第3章：一般化と証明の力</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    文字式の真価は、計算よりも「証明」において発揮される。無限に存在する数すべてについて、ある性質が成り立つことを示すには、文字を使う以外の方法がない。
+                </p>
+
+                <h3 class="sub-section-title">偶数と奇数の構造</h3>
+                <p>
+                    「偶数と奇数を足すと、必ず奇数になる」ことをどう説明するか？
+                    具体的な数（$2+3=5$、$10+7=17$）をいくつ挙げても証明にはならない。
+                    ここで文字の出番だ。偶数を $2n$、奇数を $2m+1$（$n, m$は整数）と定義する。
+                    その和は $(2n) + (2m+1) = 2(n+m) + 1$ と変形できる。
+                    $n+m$ は整数なので、$2(\text{整数})+1$ は定義により奇数である。このたった数行の式変形で、宇宙に存在するすべての偶数と奇数の組み合わせについて証明が完了する。
+                </p>
+                
+                <h3 class="sub-section-title">思考の外部化装置</h3>
+                <p>
+                    文字式は、脳のワーキングメモリを拡張する外部装置である。
+                    複雑な文章題も、一度 $x$ を使った方程式に翻訳してしまえば、あとは機械的な操作（移項や代入）だけで答えにたどり着ける。
+                    意味を考えながら解く「算数」から、意味を形式に預けて自動処理する「代数」への転換は、人類が獲得した最強の思考ツールの一つである。
+                </p>
+
+                <!-- Trivia 4 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：カプレカ数
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        文字式を使えば数の不思議な性質も解明できる。例えば3桁の整数の百の位を$a$、十の位を$b$、一の位を$c$とすると、その数は $100a+10b+c$ と表せる。
+                        これを使えば、「各位の和が3の倍数なら、元の数も3の倍数である」といった判定法の証明も可能になる。
+                        数字のパズルに見える現象の裏には、必ず代数的なタネ仕掛けが存在する。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: Modern World -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第4章：プログラミングと科学の基盤</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    現代社会において、文字式（変数）の概念を扱わない日は存在しない。コンピュータ・プログラミングと自然科学の法則は、すべて代数の言葉で書かれている。
+                </p>
+
+                <h3 class="sub-section-title">変数とアルゴリズム</h3>
+                <p>
+                    プログラミングにおける変数（Variable）は、数学の変数と兄弟のような関係だ。
+                    `total_price = price * count` というコードは、まさに数学の $y = ax$ という比例の式そのものである。
+                    アプリが画面のサイズに合わせてレイアウトを変えられるのも、座標を固定値ではなく変数 $(w, h)$ として処理しているからだ。
+                    我々は無意識のうちに、文字式によって記述されたアルゴリズムの中で生活している。
+                </p>
+
+                <h3 class="sub-section-title">世界を記述する方程式</h3>
+                <p>
+                    アインシュタインの $E=mc^2$ は、エネルギー、質量、光速という異なる物理量が、簡潔な文字式で結ばれていることを示している。
+                    ニュートンの $F=ma$ も同様だ。もし文字式がなければ、これらの法則は分厚い説明書のような文章になり、科学の発展は数百年遅れていただろう。
+                    文字と式は、自然界の複雑な現象を圧縮保存する、人類共通のフォーマットなのである。
+                </p>
+                
+                <!-- Trivia 5 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：プログラミングの「=」
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        数学での「=」は「等しい」を意味するが、多くのプログラミング言語での「=」は「代入する」という動作を意味する（等しいかどうかの判定には「==」などを使うことが多い）。
+                        例えば `i = i + 1` という式は、数学では解なし（矛盾）だが、プログラミングでは「今の $i$ に1を足して、新しい $i$ とする」という意味になる。
+                        同じ記号でも文脈によって意味が異なる、言葉の面白さである。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="text-center py-24 bg-white rounded-3xl shadow-sm border border-slate-100 dark:bg-slate-900 dark:border-slate-800 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            <div class="h-1 bg-indigo-100 dark:bg-indigo-900/30 w-32 mx-auto mb-12 rounded-full"></div>
+            <h2 class="text-4xl font-black mb-10 text-slate-800 dark:text-slate-100 tracking-tight">抽象への飛躍</h2>
+            <p class="text-xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto serif-text leading-loose px-4">
+                具体的な数値の計算から、<br>
+                文字を使った構造の理解へ。<br>
+                この「抽象化」の階段を登ったとき、<br>
+                我々は個別の問題にとらわれない俯瞰的な視点を手に入れる。<br>
+                文字と式は、複雑な世界をシンプルに解き明かすための、<br>
+                最も強力で美しい思考の翼なのである。
+            </p>
+        </section>
+
+    </main>
+
+    <!-- Quiz Panel -->
+    <div id="quizPanel" class="quiz-panel fixed top-0 right-0 h-full w-full md:w-[650px] bg-white shadow-2xl z-50 flex flex-col border-l border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+        <!-- Panel Header -->
+        <div class="p-8 border-b flex justify-between items-center bg-indigo-900 text-white shadow-md dark:bg-slate-950 dark:border-slate-800">
+            <div>
+                <h3 class="text-2xl font-bold flex items-center gap-3">
+                    Practice Problems
+                </h3>
+                <p class="text-xs text-indigo-200 mt-1 uppercase tracking-widest pl-0">Infinite Random Generator</p>
+            </div>
+            <div class="flex gap-2">
+                <button id="generateBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-bold transition-all shadow-lg border border-indigo-400 flex items-center gap-2 dark:bg-indigo-700 dark:hover:bg-indigo-600 dark:border-indigo-600 transform active:scale-95">
+                    <!-- Bootstrap Icon: shuffle -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
+                    </svg>
+                    問題を生成
+                </button>
+                <button id="closeQuiz" class="p-2.5 hover:bg-indigo-800 rounded-lg transition-colors text-indigo-200 hover:text-white">
+                    <!-- Bootstrap Icon: x-lg -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Content Area -->
+        <div class="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-slate-900 scrollbar-thin">
+            <div id="quizContainer" class="space-y-12">
+                <div class="text-center text-slate-500 dark:text-slate-400 py-32 flex flex-col items-center justify-center h-full">
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-full mb-8 animate-pulse">
+                        <!-- Bootstrap Icon: patch-check-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="text-indigo-400" viewBox="0 0 16 16">
+                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89-.01-.622-.636zM10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                        </svg>
+                    </div>
+                    <p class="text-2xl mb-3 font-bold text-slate-700 dark:text-slate-200">準備完了</p>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-xs mx-auto">右上の「問題を生成」ボタンを押して、<br>自動生成プログラムによる演習を開始してください。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-white py-24 text-center dark:bg-slate-950 dark:border-t dark:border-slate-800">
+        <p class="text-slate-500 mb-6 tracking-[0.4em] text-sm uppercase">Mathematical Archive Project</p>
+        <p class="text-sm opacity-40 serif-text italic max-w-md mx-auto leading-relaxed">
+            "Mathematics is the art of giving the same name to different things."
+            <br>– Henri Poincaré
+        </p>
+    </footer>
+
+    <script>
+        // Global variables for the quiz
+        let currentQuestions = [];
+        
+        // --- 1. Math Render Logic ---
+        function renderMath() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        // --- 2. Problem Generation Algorithm (Algebra / Characters and Expressions) ---
+        function generateAlgebra() {
+            const problems = [];
+            
+            // Generate 10 random problems
+            for (let i = 0; i < 10; i++) {
+                const type = Math.random();
+                let questionText = "";
+                let targetVal = 0;
+                let explanation = "";
+                let unit = "";
+                let isApplied = false;
+
+                if (type < 0.3) {
+                    // Type 1: Basic Substitution (Positive Integer)
+                    const a = Math.floor(Math.random() * 8) + 2; // 2 to 9
+                    const b = Math.floor(Math.random() * 9) + 1; // 1 to 9
+                    const x = Math.floor(Math.random() * 5) + 1; // 1 to 5
+                    
+                    const expression = `${a}x + ${b}`;
+                    targetVal = a * x + b;
+                    
+                    questionText = `$x = ${x}$ のとき、次の式の値を求めなさい。<br>式：$$ ${expression} $$`;
+                    explanation = `<strong>代入して計算する</strong><br>
+                    $x$ の部分を $${x}$ に置き換えます。<br>
+                    $${a} \\times ${x} + ${b}$<br>
+                    $= ${a * x} + ${b}$<br>
+                    $= ${targetVal}$`;
+
+                } else if (type < 0.6) {
+                    // Type 2: Substitution with Negative Numbers
+                    const a = Math.floor(Math.random() * 5) + 2; // 2 to 6
+                    const x = (Math.floor(Math.random() * 4) + 1) * -1; // -1 to -4
+                    const b = Math.floor(Math.random() * 10) + 1; 
+
+                    const expression = `${b} - ${a}x`; 
+                    targetVal = b - (a * x);
+
+                    questionText = `$x = ${x}$ のとき、次の式の値を求めなさい。<br>式：$$ ${expression} $$`;
+                    explanation = `<strong>負の数の代入はカッコをつける</strong><br>
+                    $${b} - ${a} \\times (${x})$<br>
+                    $= ${b} - (${a * x})$<br>
+                    $= ${b} + ${Math.abs(a * x)}$<br>
+                    $= ${targetVal}$`;
+
+                } else if (type < 0.8) {
+                    // Type 3: Applied - Exponents (Applied)
+                    isApplied = true;
+                    const x = Math.floor(Math.random() * 4) + 2; // 2 to 5
+                    // Either x^2 or x^3
+                    const isCube = Math.random() > 0.7;
+                    const power = isCube ? 3 : 2;
+                    const sub = Math.floor(Math.random() * 10) + 1;
+                    
+                    const expression = `x^${power} - ${sub}`;
+                    targetVal = Math.pow(x, power) - sub;
+
+                    questionText = `$x = ${x}$ のとき、次の式の値を求めなさい。<br>式：$$ ${expression} $$`;
+                    explanation = `<strong>累乗の計算</strong><br>
+                    $x^${power}$ は $x$ を ${power}回掛け合わせます。<br>
+                    $${x}^${power} = ${Math.pow(x, power)}$<br>
+                    したがって、$${Math.pow(x, power)} - ${sub} = ${targetVal}$ となります。`;
+
+                } else {
+                    // Type 4: Applied - Two variables substitution (Applied)
+                    isApplied = true;
+                    const x = Math.floor(Math.random() * 5) + 2;
+                    const y = Math.floor(Math.random() * 5) + 2;
+                    const a = Math.floor(Math.random() * 4) + 2;
+                    const b = Math.floor(Math.random() * 4) + 2;
+                    
+                    const expression = `${a}x - ${b}y`;
+                    targetVal = a * x - b * y;
+                    
+                    questionText = `$x = ${x}, y = ${y}$ のとき、次の式の値を求めなさい。<br>式：$$ ${expression} $$`;
+                    explanation = `<strong>2つの文字にそれぞれ代入する</strong><br>
+                    $${a} \\times ${x} - ${b} \\times ${y}$<br>
+                    $= ${a * x} - ${b * y}$<br>
+                    $= ${targetVal}$`;
+                }
+
+                problems.push({
+                    id: i + 1,
+                    text: questionText,
+                    val: targetVal,
+                    explanation: explanation,
+                    unit: unit,
+                    isApplied: isApplied
+                });
+            }
+            
+            return problems;
+        }
+
+        // --- 3. Rendering Quiz HTML ---
+        function generateQuizHTML() {
+            currentQuestions = generateAlgebra();
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = ''; // Clear
+
+            currentQuestions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-8 rounded-3xl border border-slate-200 shadow-sm transition-all hover:shadow-md dark:bg-slate-800 dark:border-slate-700 relative overflow-hidden";
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200 font-bold px-4 py-1.5 rounded-full text-sm tracking-wide">Q.${q.id}</span>
+                        ${q.isApplied ? `<span class="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">応用問題</span>` : ''}
+                    </div>
+                    <div class="text-slate-800 dark:text-slate-200 mb-8 text-lg leading-relaxed font-medium serif-text">
+                        ${q.text}
+                    </div>
+                    <div class="flex gap-4 items-center mb-6">
+                        <input type="number" id="q${q.id}-input" class="quiz-input w-full p-4 border-2 border-slate-200 rounded-2xl font-bold text-xl text-slate-700 placeholder-slate-300 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-100" placeholder="答えを入力" step="1">
+                        <span class="font-bold text-slate-400 text-xl whitespace-nowrap">${q.unit}</span>
+                    </div>
+                    <button onclick="checkAnswer(${q.id})" class="group w-full bg-slate-800 text-white font-bold py-4 rounded-2xl hover:bg-slate-700 transition-all shadow-lg shadow-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:shadow-none flex items-center justify-center gap-2">
+                        <span>答え合わせ</span>
+                        <!-- Bootstrap Icon: arrow-right-circle -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="opacity-50 group-hover:opacity-100 transition-opacity" viewBox="0 0 16 16">
+                           <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="q${q.id}-feedback" class="feedback-box bg-slate-100 dark:bg-slate-900/50"></div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Re-render MathJax/KaTeX for the new content
+            renderMath();
+        }
+
+        // --- 4. Validation Logic ---
+        function checkAnswer(qId) {
+            // qId is 1-based index
+            const data = currentQuestions[qId - 1];
+            const input = document.getElementById(`q${qId}-input`);
+            const feedback = document.getElementById(`q${qId}-feedback`);
+            const userVal = parseInt(input.value); 
+
+            feedback.style.display = 'block';
+            input.classList.remove('correct-answer', 'incorrect-answer');
+
+            // Exact match for integer answers
+            if (userVal === data.val) {
+                // Correct
+                input.classList.add('correct-answer');
+                feedback.innerHTML = `
+                    <div class="text-green-700 dark:text-green-400 font-bold text-lg mb-3 flex items-center gap-2">
+                        <!-- Bootstrap Icon: check-circle-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        正解です！
+                    </div>
+                    <div class="mt-3 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-green-200 dark:border-green-800 text-slate-700 dark:text-slate-300 shadow-sm leading-relaxed">
+                        <strong class="text-green-800 dark:text-green-300 block mb-2 text-sm uppercase tracking-wider">Solution</strong>
+                        ${data.explanation}
+                    </div>
+                `;
+                feedback.className = "feedback-box bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800";
+            } else {
+                // Incorrect
+                input.classList.add('incorrect-answer');
+                feedback.innerHTML = `
+                    <div class="text-red-700 dark:text-red-400 font-bold text-lg mb-3 flex items-center gap-2">
+                        <!-- Bootstrap Icon: x-circle-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                        </svg>
+                        不正解です...
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">計算ミスがあるようです。符号や計算順序を確認しましょう。</p>
+                    <div class="pt-4 border-t border-red-200 dark:border-red-800">
+                        <button onclick="document.getElementById('reveal-${qId}').classList.remove('hidden')" class="text-red-600 dark:text-red-400 font-bold text-sm hover:text-red-800 dark:hover:text-red-300 underline decoration-2 underline-offset-4">
+                            答えと解説を見る
+                        </button>
+                        <div id="reveal-${qId}" class="hidden mt-4 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-red-200 dark:border-red-800 text-slate-700 dark:text-slate-300 shadow-sm leading-relaxed">
+                             <div class="mb-3 text-lg font-bold text-red-700 dark:text-red-400 border-b border-red-100 dark:border-red-900 pb-2">正解：${data.val} ${data.unit}</div>
+                             <div class="text-sm">${data.explanation}</div>
+                        </div>
+                    </div>
+                `;
+                feedback.className = "feedback-box bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800";
+            }
+            renderMath(); // Re-render math in feedback
+        }
+
+        // --- 5. Event Listeners ---
+        const quizTrigger = document.getElementById('quizTrigger');
+        const quizPanel = document.getElementById('quizPanel');
+        const closeQuiz = document.getElementById('closeQuiz');
+        const generateBtn = document.getElementById('generateBtn');
+
+        quizTrigger.addEventListener('click', () => {
+            quizPanel.classList.add('active');
+            if (currentQuestions.length === 0) {
+                // Initial prompt is shown, user clicks generate
+            }
+        });
+
+        closeQuiz.addEventListener('click', () => {
+            quizPanel.classList.remove('active');
+        });
+
+        generateBtn.addEventListener('click', () => {
+            generateQuizHTML();
+            const container = document.getElementById('quizContainer');
+            if (container) container.scrollTop = 0;
+        });
+
+        // Initialize KaTeX on load
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMath();
+        });
+    </script>
+</body>
+</html>
