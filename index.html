@@ -398,79 +398,141 @@
             <h2 class="chapter-title text-slate-900 dark:text-slate-100">実践：文字式のルールと解き方</h2>
             <div class="serif-text">
                 <p>
-                    文字式を扱うには、数学の世界共通言語である「記述のルール」をマスターする必要がある。まずはこの文法を理解し、その上で実際に値を代入して解く手順を身につけよう。
+                    文字式を扱うには、数学の世界共通言語である「記述のルール」をマスターする必要がある。ここでは「掛け算（乗法）」と「割り算（除法）」のルールを明確に区別し、文法エラーを起こさないための鉄則を整理する。
                 </p>
 
-                <h3 class="sub-section-title">記述のルール：4つの鉄則</h3>
-                <p>
-                    数学的な記述には厳密な作法がある。これらを無視すると「文法エラー」と見なされるため、以下の4つのルールを徹底する。
-                </p>
-
-                <!-- Rule 1 -->
-                <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800 mb-10">
-                    <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-4 flex items-center gap-2">
-                        <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
-                        ルール1：乗法（$\times$）の省略
-                    </p>
-                    <div class="pl-4 border-l-2 border-indigo-200 dark:border-indigo-700">
-                        <p class="mb-2 text-sm text-slate-600 dark:text-slate-400">
-                            記号 $\times$ は書かない。数は文字の前に、文字はアルファベット順に並べるのが基本である。
+                <!-- 掛け算セクション -->
+                <h3 class="sub-section-title text-indigo-700 dark:text-indigo-300 border-b border-indigo-100 dark:border-indigo-800 pb-2 mb-8">
+                    【乗法】掛け算のルール
+                </h3>
+                <div class="grid gap-6">
+                    
+                    <!-- Rule 1: Omission -->
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                        <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                            記号 $\times$ の省略
                         </p>
-                        <div class="font-mono text-xl font-bold text-indigo-700 dark:text-indigo-300 py-2">
-                            $$ a \times 3 \times b \rightarrow 3ab $$
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            文字式の世界では、乗法の記号 $\times$ は書かないのが基本である。
+                            <div class="font-mono font-bold text-indigo-700 dark:text-indigo-300 mt-1">$$ a \times b \rightarrow ab $$</div>
+                        </div>
+                    </div>
+
+                    <!-- Rule 2: Number Order -->
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                        <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                            数は文字の前に書く
+                        </p>
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            数と文字の積では、必ず数を先に書く。後ろに書いてはいけない。
+                            <div class="font-mono font-bold text-indigo-700 dark:text-indigo-300 mt-1">$$ x \times 3 \rightarrow 3x \quad (\times x3 \text{ は誤り}) $$</div>
+                        </div>
+                    </div>
+
+                    <!-- Rule 3: Alphabetical Order -->
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                        <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
+                            文字はアルファベット順
+                        </p>
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            複数の文字がある場合、原則としてアルファベット順に並べる。
+                            <div class="font-mono font-bold text-indigo-700 dark:text-indigo-300 mt-1">$$ z \times a \times y \rightarrow ayz $$</div>
+                        </div>
+                    </div>
+
+                    <!-- Rule 4: 1 and -1 -->
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                        <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">4</span>
+                            $1$ の省略
+                        </p>
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            係数が $1$ または $-1$ の場合、$1$ は書かない。ただし、$0.1$ などの小数の場合は $1$ を省略しない。
+                            <div class="font-mono font-bold text-indigo-700 dark:text-indigo-300 mt-1">
+                                $$ 1 \times a \rightarrow a, \quad (-1) \times b \rightarrow -b $$
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rule 5: Exponents -->
+                    <div class="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-2xl border border-amber-100 dark:border-amber-800">
+                        <p class="font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
+                            <span class="bg-amber-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">5</span>
+                            同じ文字の積は指数を使う
+                        </p>
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            同じ文字を複数回掛ける場合は、右上に小さく個数を書き「累乗」にする。
+                            <div class="font-mono font-bold text-amber-800 dark:text-amber-300 mt-1">$$ x \times x \times x \rightarrow x^3 $$</div>
+                        </div>
+                    </div>
+
+                    <!-- Rule 6: Parentheses -->
+                    <div class="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-2xl border border-amber-100 dark:border-amber-800">
+                        <p class="font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
+                            <span class="bg-amber-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">6</span>
+                            式の積は数を前に
+                        </p>
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            数と式の積の場合、数をかっこの前に書く。$\times$ は省略する。
+                            <div class="font-mono font-bold text-amber-800 dark:text-amber-300 mt-1">$$ (a + b) \times 4 \rightarrow 4(a + b) $$</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Rule 2 -->
-                <div class="bg-emerald-50 dark:bg-emerald-900/10 p-8 rounded-2xl border border-emerald-100 dark:border-emerald-800 mb-10">
-                    <p class="font-bold text-emerald-900 dark:text-emerald-200 mb-4 flex items-center gap-2">
-                        <span class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
-                        ルール2：$1$ の省略
-                    </p>
-                    <div class="pl-4 border-l-2 border-emerald-200 dark:border-emerald-700">
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                            係数が $1$ または $-1$ の場合、$1$ は書かない（ただし、$0.1$ などの小数は例外）。
+                <!-- 割り算セクション -->
+                <h3 class="sub-section-title text-purple-700 dark:text-purple-300 border-b border-purple-100 dark:border-purple-800 pb-2 mb-8 mt-16">
+                    【除法】割り算のルール
+                </h3>
+                <div class="grid gap-6">
+
+                    <!-- Rule 1: Fraction -->
+                    <div class="bg-purple-50 dark:bg-purple-900/20 p-8 rounded-2xl border border-purple-100 dark:border-purple-800">
+                        <p class="font-bold text-purple-900 dark:text-purple-200 mb-2 flex items-center gap-2">
+                            <span class="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                            記号 $\div$ は分数にする
                         </p>
-                        <div class="font-mono text-xl font-bold text-emerald-800 dark:text-emerald-300 py-2">
-                            $$ 1 \times a \rightarrow a, \quad -1 \times x \rightarrow -x $$
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            記号 $\div$ は使わず、分数の形で表す。割る数（記号の後ろ）が分母に来る。
+                            <div class="font-mono font-bold text-purple-800 dark:text-purple-300 mt-1">
+                                $$ a \div 5 \rightarrow \frac{a}{5} $$
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Rule 3 -->
-                <div class="bg-amber-50 dark:bg-amber-900/10 p-8 rounded-2xl border border-amber-100 dark:border-amber-800 mb-10">
-                    <p class="font-bold text-amber-900 dark:text-amber-200 mb-4 flex items-center gap-2">
-                        <span class="bg-amber-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
-                        ルール3：同じ文字の積は指数
-                    </p>
-                    <div class="pl-4 border-l-2 border-amber-200 dark:border-amber-700">
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                            同じ文字を複数回掛ける場合は、右上に小さく個数を書き「累乗」の形で表す。
+                    <!-- Rule 2: Negative Sign -->
+                    <div class="bg-purple-50 dark:bg-purple-900/20 p-8 rounded-2xl border border-purple-100 dark:border-purple-800">
+                        <p class="font-bold text-purple-900 dark:text-purple-200 mb-2 flex items-center gap-2">
+                            <span class="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                            分数の符号は前に出す
                         </p>
-                        <div class="font-mono text-xl font-bold text-amber-800 dark:text-amber-300 py-2">
-                            $$ x \times x \times x \rightarrow x^3 $$
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            分子や分母にマイナスがある場合、その符号は分数の横（前）に出すのが美しいとされる。
+                            <div class="font-mono font-bold text-purple-800 dark:text-purple-300 mt-1">
+                                $$ a \div (-b) \rightarrow \frac{a}{-b} \rightarrow -\frac{a}{b} $$
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Rule 4 -->
-                <div class="bg-purple-50 dark:bg-purple-900/20 p-8 rounded-2xl border border-purple-100 dark:border-purple-800 mb-10">
-                    <p class="font-bold text-purple-900 dark:text-purple-200 mb-4 flex items-center gap-2">
-                        <span class="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">4</span>
-                        ルール4：除法（$\div$）は分数
-                    </p>
-                    <div class="pl-4 border-l-2 border-purple-200 dark:border-purple-700">
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                            記号 $\div$ は使わず、分数の形で表す。割る数（後ろの数）が分母に来る。
+                    <!-- Rule 3: Reciprocal -->
+                    <div class="bg-emerald-50 dark:bg-emerald-900/10 p-8 rounded-2xl border border-emerald-100 dark:border-emerald-800">
+                        <p class="font-bold text-emerald-900 dark:text-emerald-200 mb-2 flex items-center gap-2">
+                            <span class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
+                            分数で割る場合は逆数を掛ける
                         </p>
-                        <div class="font-mono text-xl font-bold text-purple-800 dark:text-purple-300 py-2">
-                            $$ a \div 5 \rightarrow \frac{a}{5} $$
+                        <div class="pl-8 text-sm text-slate-600 dark:text-slate-400">
+                            分数で割り算をする場合は、逆数にして掛け算のルールを適用する。
+                            <div class="font-mono font-bold text-emerald-800 dark:text-emerald-300 mt-1">
+                                $$ x \div \frac{2}{3} \rightarrow x \times \frac{3}{2} \rightarrow \frac{3x}{2} $$
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <h3 class="sub-section-title">計算の実践：代入のテクニック</h3>
+                <h3 class="sub-section-title mt-16">計算の実践：代入のテクニック</h3>
                 <p>
                     ルールを覚えたら、実際に「箱（文字）」に数を入れて計算してみよう。ここで最も重要なのは<strong>「代入するときは、元の式の形を変えない」</strong>ことだ。
                 </p>
