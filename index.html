@@ -808,6 +808,7 @@
         </section>
 
         
+        
         <!-- Simulation Tool: Interactive Lab -->
         <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
             <h2 class="chapter-title text-slate-900 dark:text-slate-100">Lab：代入・ビジュアライザー</h2>
@@ -815,16 +816,12 @@
                 <p class="mb-8">
                     文字 $x$ は、どんな数値も入れることができる「箱」である。箱の中身を変えることで、式全体の計算結果がどのように変化するかを観察しよう。
                 </p>
-                
                 <div class="diagram-box bg-slate-50 dark:bg-slate-950 p-10 rounded-3xl border border-slate-200 dark:border-slate-800">
                     <div class="w-full max-w-xl space-y-10">
                         <div class="text-center">
                             <p class="text-sm font-bold text-slate-400 mb-4 uppercase">現在の式</p>
-                            <div class="text-4xl font-serif text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 py-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                                3x + 5
-                            </div>
+                            <div class="text-4xl font-serif text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 py-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">3x + 5</div>
                         </div>
-                        
                         <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
                             <label class="flex justify-between text-sm font-bold text-slate-500 mb-6">
                                 <span>x の値を変更</span>
@@ -832,7 +829,6 @@
                             </label>
                             <input type="range" id="algSliderX" min="-20" max="20" value="0" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
                         </div>
-                        
                         <div class="flex items-center justify-center gap-8">
                             <div class="text-center">
                                 <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-2xl font-bold mb-2">3</div>
@@ -858,7 +854,6 @@
                 </div>
             </div>
         </section>
-
         <script>
             function initAlgSim() {
                 const slider = document.getElementById('algSliderX');
@@ -866,7 +861,6 @@
                 const valText = document.getElementById('algValX');
                 const boxX = document.getElementById('algBoxX');
                 const result = document.getElementById('algResult');
-                
                 slider.addEventListener('input', () => {
                     const x = parseInt(slider.value);
                     valText.textContent = x;
